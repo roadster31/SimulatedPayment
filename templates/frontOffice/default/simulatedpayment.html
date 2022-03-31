@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Payment</title>
+</head>
+<body>
+    <h1>Payment</h1>
+    {loop type="order" name="order" id={$smarty.get.order_id|default:0}}
+    <p><a href="{url path="/simulatedpayment/pay/%id" id=$ID}">Please click here to pay order {$REF}</a></p>
+    {/loop}
+
+    {elseloop rel="order"}
+        <p>ERROR : order was non found.</p>
+    {/elseloop}
+    <p><a href="{url path="/simulatedpayment/cancel/%id" id={$smarty.get.order_id|default:0}}">Click here to cancel payment</a></p>
+
+</body>
+</html>
