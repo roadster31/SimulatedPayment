@@ -1,5 +1,5 @@
 {
-  "name": "thelia/simulated-payment-module",
+  "name": "roadster31/simulated-payment-module",
   "license": "LGPL-3.0+",
   "type": "thelia-module",
   "require": {
