@@ -15,7 +15,6 @@ namespace SimulatedPayment;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Model\Order;
-use Thelia\Module\BaseModule;
 use Thelia\Module\AbstractPaymentModule;
 use Thelia\Tools\URL;
 

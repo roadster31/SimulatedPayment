@@ -15,6 +15,7 @@
 
 namespace SimulatedPayment\Controller;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\Event\Order\OrderEvent;
@@ -25,7 +26,7 @@ use Thelia\Tools\URL;
 
 class PaymentController extends BaseFrontController
 {
-    public function pay(int $orderId): RedirectResponse
+    public function pay(int $orderId, EventDispatcherInterface $dispatcher): RedirectResponse
     {
         if (null !== $order = OrderQuery::create()->findPk($orderId)) {
             // On ne peut payer que des commande "non payées"
@@ -34,16 +35,16 @@ class PaymentController extends BaseFrontController
 
                 $event->setStatus(OrderStatusQuery::getPaidStatus()->getId());
 
-                $this->dispatch(TheliaEvents::ORDER_UPDATE_STATUS , $event);
+                $dispatcher->dispatch($event, TheliaEvents::ORDER_UPDATE_STATUS);
 
                 return $this->generateRedirect(URL::getInstance()->absoluteUrl("/order/placed/$orderId"));
             }
         }
 
-        return $this->generateRedirect(URL::getInstance()->absoluteUrl("/order/failed/$orderId/Order%20wad%20not%20found%20oir%20is%20already%20paid%20or%20canceled"));
+        return $this->generateRedirect(URL::getInstance()->absoluteUrl("/order/failed/$orderId/Order%20was%20not%20found%20or%20is%20already%20paid%20or%20canceled"));
     }
 
-    public function cancel(int $orderId): RedirectResponse
+    public function cancel(int $orderId, EventDispatcherInterface $dispatcher): RedirectResponse
     {
         if (null !== $order = OrderQuery::create()->findPk($orderId)) {
             // On ne peut payer que des commande "non payées"
@@ -52,7 +53,7 @@ class PaymentController extends BaseFrontController
 
                 $event->setStatus(OrderStatusQuery::getCancelledStatus()->getId());
 
-                $this->dispatch(TheliaEvents::ORDER_UPDATE_STATUS , $event);
+                $dispatcher->dispatch($event, TheliaEvents::ORDER_UPDATE_STATUS);
             }
         }
 

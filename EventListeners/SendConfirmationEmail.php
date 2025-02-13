@@ -52,8 +52,8 @@ class SendConfirmationEmail implements EventSubscriberInterface
         $order = $event->getOrder();
 
         if ($order->isPaid() && $order->getPaymentModuleId() == SimulatedPayment::getModuleId()) {
-            $dispatcher->dispatch(TheliaEvents::ORDER_SEND_CONFIRMATION_EMAIL, clone $event);
-            $dispatcher->dispatch(TheliaEvents::ORDER_SEND_NOTIFICATION_EMAIL, clone $event);
+            $dispatcher->dispatch(clone $event, TheliaEvents::ORDER_SEND_CONFIRMATION_EMAIL);
+            $dispatcher->dispatch(clone $event, TheliaEvents::ORDER_SEND_NOTIFICATION_EMAIL);
 
             Tlog::getInstance()->debug("Confirmation email sent to customer " . $order->getCustomer()->getEmail());
         }
