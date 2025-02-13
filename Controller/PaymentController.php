@@ -15,6 +15,7 @@
 
 namespace SimulatedPayment\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Front\BaseFrontController;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -24,7 +25,7 @@ use Thelia\Tools\URL;
 
 class PaymentController extends BaseFrontController
 {
-    public function pay($orderId)
+    public function pay(int $orderId): RedirectResponse
     {
         if (null !== $order = OrderQuery::create()->findPk($orderId)) {
             // On ne peut payer que des commande "non payées"
@@ -42,7 +43,7 @@ class PaymentController extends BaseFrontController
         return $this->generateRedirect(URL::getInstance()->absoluteUrl("/order/failed/$orderId/Order%20wad%20not%20found%20oir%20is%20already%20paid%20or%20canceled"));
     }
 
-    public function cancel($orderId)
+    public function cancel(int $orderId): RedirectResponse
     {
         if (null !== $order = OrderQuery::create()->findPk($orderId)) {
             // On ne peut payer que des commande "non payées"
