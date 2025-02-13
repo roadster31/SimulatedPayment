@@ -26,17 +26,10 @@ use Thelia\Mailer\MailerFactory;
  */
 class SendConfirmationEmail implements EventSubscriberInterface
 {
-    /** @var MailerFactory */
-    protected $mailer;
-
-    public function __construct(MailerFactory $mailer)
-    {
-        $this->mailer = $mailer;
-    }
+    public function __construct(protected MailerFactory $mailer)
+    {}
 
     /**
-     * @param OrderEvent $event
-     *
      * @throws \Exception if the message cannot be loaded.
      */
     public function checkSendEmail(OrderEvent $event)
@@ -44,7 +37,7 @@ class SendConfirmationEmail implements EventSubscriberInterface
         // We send the order confirmation email only if the order is paid
         $order = $event->getOrder();
 
-        if (! $order->isPaid() && $order->getPaymentModuleId() == SimulatedPayment::getModuleId()) {
+        if (! $order->isPaid() && $order->getPaymentModuleId() === SimulatedPayment::getModuleId()) {
             $event->stopPropagation();
         }
     }
@@ -52,18 +45,15 @@ class SendConfirmationEmail implements EventSubscriberInterface
     /**
      * Checks if order payment module is paypal and if order new status is paid, send an email to the customer.
      *
-     * @param OrderEvent $event
-     * @param $eventName
-     * @param EventDispatcherInterface $dispatcher
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function updateStatus(OrderEvent $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function updateStatus(OrderEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
     {
         $order = $event->getOrder();
 
         if ($order->isPaid() && $order->getPaymentModuleId() == SimulatedPayment::getModuleId()) {
-            $dispatcher->dispatch(TheliaEvents::ORDER_SEND_CONFIRMATION_EMAIL, clone $event);
-            $dispatcher->dispatch(TheliaEvents::ORDER_SEND_NOTIFICATION_EMAIL, clone $event);
+            $dispatcher->dispatch(clone $event, TheliaEvents::ORDER_SEND_CONFIRMATION_EMAIL);
+            $dispatcher->dispatch(clone $event, TheliaEvents::ORDER_SEND_NOTIFICATION_EMAIL);
 
             Tlog::getInstance()->debug("Confirmation email sent to customer " . $order->getCustomer()->getEmail());
         }

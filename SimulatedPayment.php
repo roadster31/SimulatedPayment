@@ -12,9 +12,9 @@
 
 namespace SimulatedPayment;
 
+use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Model\Order;
-use Thelia\Module\BaseModule;
 use Thelia\Module\AbstractPaymentModule;
 use Thelia\Tools\URL;
 
@@ -33,5 +33,13 @@ class SimulatedPayment extends AbstractPaymentModule
     public function manageStockOnCreation()
     {
         return false;
+    }
+
+    public static function configureServices(ServicesConfigurator $servicesConfigurator): void
+    {
+        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->autowire(true)
+            ->autoconfigure(true);
     }
 }
